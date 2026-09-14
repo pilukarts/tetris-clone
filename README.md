@@ -8,7 +8,7 @@ Una reinvención espacial y móvil del prototipo original. Esta versión sustitu
 - Puntuación, niveles, líneas y récord local/Telegram CloudStorage.
 - Controles táctiles y de teclado, vibración háptica y sonido sintetizado.
 - Diseño responsive, safe areas, animaciones, partículas y tema espacial.
-- Ruta galáctica con 12 misiones, objetivos de líneas/puntuación y desbloqueo progresivo.
+- Campaña con 30 misiones repartidas entre las galaxias Aurora, Prisma y Supernova, con objetivos crecientes y desbloqueo progresivo.
 - Espacios claramente marcados para patrocinio, anuncios recompensados, tienda con Stars y torneos.
 
 ## Probar localmente
