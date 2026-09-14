@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div id="splashScreen" class="splash-screen"><div class="splash-astro">★</div><strong>ASTRO</strong><span id="loadingText">CARGANDO GALAXIA…</span><i></i></div>
   <div class="stars" aria-hidden="true"></div>
   <main class="app-shell">
     <header class="topbar">
@@ -16,11 +17,18 @@
         <div class="mascot" aria-label="Astro, mascota de Cosmic Blocks"><span>★</span></div>
         <div><small>MISIÓN</small><h1>COSMIC <em>BLOCKS</em></h1></div>
       </div>
-      <div class="header-actions"><button id="mapButton" class="icon-button" aria-label="Ver mapa galáctico">🪐</button><button id="soundButton" class="icon-button" aria-label="Activar o silenciar sonido">♫</button></div>
+      <div class="header-actions"><button id="langButton" class="icon-button language-button" aria-label="Cambiar idioma">ES</button><button id="mapButton" class="icon-button" aria-label="Ver mapa galáctico">🪐</button><button id="soundButton" class="icon-button" aria-label="Activar o silenciar sonido">♫</button></div>
     </header>
 
-    <section id="mapScreen" class="map-screen">
-      <div class="map-heading"><small>BITÁCORA DE ASTRO</small><h2>RUTA GALÁCTICA</h2><p>Completa cada misión para viajar al siguiente planeta.</p></div>
+    <section id="landingScreen" class="landing-screen">
+      <div class="landing-copy"><small id="landingKicker">UNA AVENTURA PILUKARTS</small><h2>ASTRO<br><em>COSMIC BLOCKS</em></h2><p id="landingDescription">Viaja por tres galaxias, completa 30 misiones y conquista el Trono Cósmico.</p></div>
+      <div class="astro-stage" aria-hidden="true"><div class="orbit-line"></div><div class="walking-astro"><div class="walker-antenna">★</div><div class="walker-head"><span>◕‿◕</span></div><div class="walker-body">✦</div><i class="walker-arm arm-left"></i><i class="walker-arm arm-right"></i><i class="walker-leg leg-left"></i><i class="walker-leg leg-right"></i></div><div class="stage-planet"></div></div>
+      <div class="landing-actions"><button id="adventureButton" class="primary">EMPEZAR AVENTURA</button><button id="landingShopButton" class="secondary">🛍 TIENDA</button></div>
+      <p id="landingHint" class="landing-hint">Controles táctiles · Sonido · Progreso guardado</p>
+    </section>
+
+    <section id="mapScreen" class="map-screen hidden">
+      <div class="map-heading"><small id="mapKicker">BITÁCORA DE ASTRO</small><h2 id="mapTitle">RUTA GALÁCTICA</h2><p id="mapDescription">Completa cada misión para viajar al siguiente planeta.</p></div>
       <div id="missionPath" class="mission-path" aria-label="Selección de misiones"></div>
     </section>
 
@@ -74,6 +82,6 @@
     </div>
     <footer>Cosmic Blocks · Prototipo Mini App</footer>
   </main>
-  <script src="app.js?v=20260914-2"></script>
+  <script src="app.js?v=20260914-3"></script>
 </body>
 </html>
