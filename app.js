@@ -54,7 +54,7 @@ document.querySelector("#soundButton").onclick=e=>{soundOn=!soundOn;e.currentTar
 document.querySelectorAll("[data-action]").forEach(b=>{const act=()=>{if(!playing||paused)return;({left:()=>move(-1),right:()=>move(1),rotate,down:()=>down(true),drop:hardDrop})[b.dataset.action]()};b.addEventListener("pointerdown",e=>{e.preventDefault();act()})});
 addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","ArrowDown","ArrowUp"," ","p","P"].includes(e.key))e.preventDefault();if(!playing||paused){if((e.key==="p"||e.key==="P")&&paused)togglePause();return}({ArrowLeft:()=>move(-1),ArrowRight:()=>move(1),ArrowDown:()=>down(true),ArrowUp:rotate," ":hardDrop,p:togglePause,P:togglePause})[e.key]?.()});
 document.querySelector("#rewardButton").onclick=()=>notice("Recompensas","Aquí se conectará un proveedor de anuncios recompensados. No se concede ninguna recompensa en este prototipo.");
-document.querySelector("#shopButton").onclick=()=>notice("Tienda cósmica","Los cosméticos se cobrarán con Telegram Stars mediante facturas creadas por el bot. Requiere backend y bot configurado.");
+document.querySelector("#shopButton").onclick=()=>{const url="https://www.redbubble.com/es/people/pilukarts/shop";if(tg?.openLink)tg.openLink(url);else window.open(url,"_blank","noopener,noreferrer")};
 document.querySelector("#tournamentButton").onclick=()=>notice("Torneos","La clasificación verificable y los premios requieren servidor, reglas oficiales y revisión legal según tu país.");
 document.querySelector("#sponsorButton").onclick=()=>notice("Espacio para patrocinador","Configura aquí el enlace de una marca colaboradora antes de publicar.");
 loadHigh();renderMap();draw();
