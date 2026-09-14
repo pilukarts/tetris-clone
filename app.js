@@ -3,12 +3,21 @@ const COLS=10,ROWS=20,SIZE=30;
 const COLORS=[null,"#39e7ff","#ffd34d","#b75cff","#4d76ff","#ff4ca6","#55e87a","#ff8a3d"];
 const SHAPES=[[[1,1,1,1]],[[2,2],[2,2]],[[0,3,0],[3,3,3]],[[4,0,0],[4,4,4]],[[0,0,5],[5,5,5]],[[0,6,6],[6,6,0]],[[7,7,0],[0,7,7]]];
 const MISSIONS=[
- {name:"Órbita Lunar",type:"lines",target:3,icon:"☾"},{name:"Nebulosa Cian",type:"score",target:900,icon:"✦"},
- {name:"Planeta Prisma",type:"lines",target:6,icon:"◈"},{name:"Cinturón Violeta",type:"score",target:1800,icon:"◆"},
- {name:"Satélite Astro",type:"lines",target:9,icon:"★"},{name:"Cometa Rosa",type:"score",target:3000,icon:"☄"},
- {name:"Anillo Solar",type:"lines",target:12,icon:"◉"},{name:"Portal Cuántico",type:"score",target:4500,icon:"◎"},
- {name:"Galaxia Gemela",type:"lines",target:16,icon:"∞"},{name:"Supernova",type:"score",target:6500,icon:"✺"},
- {name:"Vacío Estelar",type:"lines",target:20,icon:"⬡"},{name:"Trono Cósmico",type:"score",target:9000,icon:"♛"}
+ {galaxy:"Galaxia Aurora",name:"Órbita Lunar",type:"lines",target:3,icon:"☾"},{galaxy:"Galaxia Aurora",name:"Nebulosa Cian",type:"score",target:700,icon:"✦"},
+ {galaxy:"Galaxia Aurora",name:"Planeta Prisma",type:"lines",target:5,icon:"◈"},{galaxy:"Galaxia Aurora",name:"Luna Violeta",type:"score",target:1200,icon:"◆"},
+ {galaxy:"Galaxia Aurora",name:"Satélite Astro",type:"lines",target:7,icon:"★"},{galaxy:"Galaxia Aurora",name:"Cometa Rosa",type:"score",target:1800,icon:"☄"},
+ {galaxy:"Galaxia Aurora",name:"Anillo Solar",type:"lines",target:9,icon:"◉"},{galaxy:"Galaxia Aurora",name:"Portal Aurora",type:"score",target:2500,icon:"◎"},
+ {galaxy:"Galaxia Aurora",name:"Estrella Gemela",type:"lines",target:11,icon:"∞"},{galaxy:"Galaxia Aurora",name:"Guardián de Luz",type:"score",target:3200,icon:"♕"},
+ {galaxy:"Galaxia Prisma",name:"Cristal Errante",type:"lines",target:10,icon:"◇"},{galaxy:"Galaxia Prisma",name:"Lluvia Espectral",type:"score",target:3000,icon:"☂"},
+ {galaxy:"Galaxia Prisma",name:"Órbita Esmeralda",type:"lines",target:13,icon:"●"},{galaxy:"Galaxia Prisma",name:"Cúmulo Magenta",type:"score",target:4000,icon:"✧"},
+ {galaxy:"Galaxia Prisma",name:"Planeta Espejo",type:"lines",target:15,icon:"◐"},{galaxy:"Galaxia Prisma",name:"Rayo Cuántico",type:"score",target:5000,icon:"ϟ"},
+ {galaxy:"Galaxia Prisma",name:"Laberinto Orbital",type:"lines",target:18,icon:"⌘"},{galaxy:"Galaxia Prisma",name:"Corona de Astro",type:"score",target:6200,icon:"♔"},
+ {galaxy:"Galaxia Prisma",name:"Nexo Cromático",type:"lines",target:21,icon:"✣"},{galaxy:"Galaxia Prisma",name:"Titán Prisma",type:"score",target:7500,icon:"⬢"},
+ {galaxy:"Galaxia Supernova",name:"Frontera Oscura",type:"lines",target:18,icon:"◒"},{galaxy:"Galaxia Supernova",name:"Púlsar Dorado",type:"score",target:6500,icon:"✹"},
+ {galaxy:"Galaxia Supernova",name:"Campo Meteórico",type:"lines",target:22,icon:"✵"},{galaxy:"Galaxia Supernova",name:"Horizonte Rojo",type:"score",target:8000,icon:"◓"},
+ {galaxy:"Galaxia Supernova",name:"Vacío Estelar",type:"lines",target:26,icon:"⬡"},{galaxy:"Galaxia Supernova",name:"Motor Infinito",type:"score",target:10000,icon:"∞"},
+ {galaxy:"Galaxia Supernova",name:"Tormenta Cósmica",type:"lines",target:30,icon:"≋"},{galaxy:"Galaxia Supernova",name:"Núcleo Ardiente",type:"score",target:12500,icon:"☀"},
+ {galaxy:"Galaxia Supernova",name:"Última Supernova",type:"lines",target:35,icon:"✺"},{galaxy:"Galaxia Supernova",name:"Trono Cósmico",type:"score",target:15000,icon:"♛"}
 ];
 const canvas=document.querySelector("#game"),ctx=canvas.getContext("2d"),nextCtx=document.querySelector("#next").getContext("2d");
 const ui=Object.fromEntries(["score","level","lines","highScore","overlay","overlayTitle","overlayText","welcome","combo"].map(id=>[id,document.getElementById(id)]));
@@ -34,7 +43,7 @@ function gameOver(){playing=false;const high=Math.max(score,Number(localStorage.
 function updateUI(){ui.score.textContent=score.toLocaleString("es");ui.level.textContent=level;ui.lines.textContent=lines}
 function objective(m){return m.type==="lines"?`Completa ${m.target} líneas`:`Alcanza ${m.target.toLocaleString("es")} puntos`}
 function checkMission(){if(won||!playing)return;const m=MISSIONS[missionIndex],done=m.type==="lines"?lines>=m.target:score>=m.target;if(!done)return;won=true;playing=false;const unlocked=Math.max(Number(localStorage.getItem("cosmic-unlocked")||1),Math.min(MISSIONS.length,missionIndex+2));localStorage.setItem("cosmic-unlocked",unlocked);ui.overlayTitle.textContent="¡MISIÓN CUMPLIDA!";ui.overlayText.textContent=`${m.name} completada. La siguiente órbita está disponible.`;document.querySelector("#startButton").textContent="REPETIR MISIÓN";ui.overlay.classList.remove("hidden");burst(COLS/2,ROWS/2);tone(740,.16);setTimeout(()=>tone(980,.22),170);renderMap()}
-function renderMap(){const unlocked=Number(localStorage.getItem("cosmic-unlocked")||1),path=document.querySelector("#missionPath");path.innerHTML="";MISSIONS.forEach((m,i)=>{const button=document.createElement("button");button.className=`mission-node ${i>=unlocked?"locked":i<unlocked-1?"completed":"current"}`;button.disabled=i>=unlocked;button.innerHTML=`<span class="planet">${m.icon}</span><span><b>${i+1}. ${m.name}</b><small>${objective(m)}</small></span>`;button.onclick=()=>selectMission(i);path.append(button)})}
+function renderMap(){const unlocked=Number(localStorage.getItem("cosmic-unlocked")||1),path=document.querySelector("#missionPath");path.innerHTML="";let lastGalaxy="";MISSIONS.forEach((m,i)=>{if(m.galaxy!==lastGalaxy){lastGalaxy=m.galaxy;const heading=document.createElement("div");heading.className=`galaxy-heading galaxy-${Math.floor(i/10)+1}`;heading.innerHTML=`<span>GALAXIA ${Math.floor(i/10)+1}</span><strong>${m.galaxy.replace("Galaxia ","")}</strong><small>Misiones ${i+1}–${Math.min(i+10,MISSIONS.length)}</small>`;path.append(heading)}const button=document.createElement("button");button.className=`mission-node ${i>=unlocked?"locked":i<unlocked-1?"completed":"current"}`;button.disabled=i>=unlocked;button.innerHTML=`<span class="planet">${m.icon}</span><span><b>${i+1}. ${m.name}</b><small>${objective(m)}</small></span>`;button.onclick=()=>selectMission(i);path.append(button)})}
 function selectMission(i){missionIndex=i;document.querySelector("#missionNumber").textContent=i+1;document.querySelector("#mapScreen").classList.add("hidden");document.querySelector("#gameScreen").classList.remove("hidden");ui.overlayTitle.textContent=MISSIONS[i].name.toUpperCase();ui.overlayText.textContent=objective(MISSIONS[i]);document.querySelector("#startButton").textContent="INICIAR MISIÓN";ui.overlay.classList.remove("hidden");draw()}
 function showMap(){playing=false;paused=false;document.querySelector("#gameScreen").classList.add("hidden");document.querySelector("#mapScreen").classList.remove("hidden");renderMap();scrollTo({top:0,behavior:"smooth"})}
 function saveCloud(high){tg?.CloudStorage?.setItem("cosmic-high",String(high),()=>{})}
@@ -54,7 +63,7 @@ document.querySelector("#soundButton").onclick=e=>{soundOn=!soundOn;e.currentTar
 document.querySelectorAll("[data-action]").forEach(b=>{const act=()=>{if(!playing||paused)return;({left:()=>move(-1),right:()=>move(1),rotate,down:()=>down(true),drop:hardDrop})[b.dataset.action]()};b.addEventListener("pointerdown",e=>{e.preventDefault();act()})});
 addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","ArrowDown","ArrowUp"," ","p","P"].includes(e.key))e.preventDefault();if(!playing||paused){if((e.key==="p"||e.key==="P")&&paused)togglePause();return}({ArrowLeft:()=>move(-1),ArrowRight:()=>move(1),ArrowDown:()=>down(true),ArrowUp:rotate," ":hardDrop,p:togglePause,P:togglePause})[e.key]?.()});
 document.querySelector("#rewardButton").onclick=()=>notice("Recompensas","Aquí se conectará un proveedor de anuncios recompensados. No se concede ninguna recompensa en este prototipo.");
-document.querySelector("#shopButton").onclick=()=>{const url="https://www.redbubble.com/es/people/pilukarts/shop";if(tg?.openLink)tg.openLink(url);else window.open(url,"_blank","noopener,noreferrer")};
+document.querySelector("#shopButton").onclick=()=>notice("Tienda cósmica","Los cosméticos se cobrarán con Telegram Stars mediante facturas creadas por el bot. Requiere backend y bot configurado.");
 document.querySelector("#tournamentButton").onclick=()=>notice("Torneos","La clasificación verificable y los premios requieren servidor, reglas oficiales y revisión legal según tu país.");
 document.querySelector("#sponsorButton").onclick=()=>notice("Espacio para patrocinador","Configura aquí el enlace de una marca colaboradora antes de publicar.");
 loadHigh();renderMap();draw();
