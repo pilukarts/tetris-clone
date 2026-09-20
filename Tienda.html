@@ -1,0 +1,49 @@
+import telebot
+import json
+
+TOKEN_BOT = "AQUÍ_EL_TOKEN_DE_TU_BOT"  # De @BotFather
+TOKEN_PAGO = "AQUÍ_EL_TOKEN_DE_PAGO"  # Del paso anterior
+
+bot = telebot.TeleBot(TOKEN_BOT)
+
+# Recibe la orden desde la tienda
+@bot.message_handler(content_types=['web_app_data'])
+def desde_tienda(mensaje):
+    datos = json.loads(mensaje.web_app_data.data)
+    
+    if datos['accion'] == 'comprar':
+        # Crea el pago oficial de Telegram
+        bot.send_invoice(
+            chat_id=mensaje.chat.id,
+            title=f"Compra: {datos['producto']}",
+            description="Gracias por apoyar CosmicBTetris 🚀",
+            invoice_payload=datos['producto'],
+            provider_token=TOKEN_PAGO,
+            currency='EUR',
+            prices=[{
+                'label': datos['producto'],
+                'amount': int(round(float(datos['monto']) * 100))  # En céntimos
+            }]
+        )
+
+# Confirma que todo está bien antes de cobrar
+@bot.pre_checkout_query_handler(func=lambda q: True)
+def antes_de_pagar(query):
+    bot.answer_pre_checkout_query(query.id, ok=True)
+
+# ✅ Pago EXITOSO — aquí actualizas las recompensas
+@bot.message_handler(content_types=['successful_payment'])
+def pago_confirmado(mensaje):
+    producto = mensaje.successful_payment.invoice_payload
+    usuario_id = mensaje.from_user.id
+    
+    # AQUÍ actualizas lo que le toca al jugador
+    # Ejemplo: sumar gemas, activar VIP, etc.
+    
+    bot.send_message(
+        mensaje.chat.id,
+        f"✅ ¡Pago recibido! 🎉\n\nTe activamos: {producto}\n\n¡Disfruta jugando! 🌌"
+    )
+
+print("🤖 Bot CosmicBTetris funcionando...")
+bot.infinity_polling()
